@@ -1,0 +1,130 @@
+#!/bin/bash
+
+touch balance.txt
+balance=`cat balance.txt`;
+deposit=0;
+AMOUNT=0;
+echo "Enter Card no:"
+read card
+echo "Enter Pin no:"
+read pin
+if [ "$card" -eq "123456789876" -a "$pin" -eq "1234" ]; then
+{
+	echo "Welcome Pooja!"
+}
+else
+{
+	echo -n "Enter valid card and pin:"
+	read card
+	read pin
+	echo "Welcome Pooja!"
+} fi
+while :
+do
+echo "*************Welcome to ATM Service**************"
+echo "1. Balance Enquiry
+2. Cash Withdrawal 
+3. Deposit Amount 
+4. Exit
+Select your choice:
+*************************************************"
+read INPUT_INTEGER
+	case $INPUT_INTEGER in
+		1)
+			echo "Your current balance is ${balance}"
+			;;
+		2)
+			echo -e -n "\t\t\t\t\tEnter the Amount :"
+			read AMOUNT
+			if [[ "$AMOUNT" -gt "$balance" ]]
+			then 
+				echo "Insufficient balance"
+				exit 0;
+			fi
+			withdraw_amount=$AMOUNT
+			if [[ "$AMOUNT" -le 10000 ]]
+			then
+
+				if [[ "$AMOUNT" > 2000 ]]
+				then 
+					no_of_2000_note=$(( $AMOUNT / 2000 ))
+					remaining_cash=$(($no_of_2000_note * 2000))
+					AMOUNT=$(($AMOUNT - $remaining_cash)) 
+					#echo no of 2000 notes receive $no_of_2000_note
+				fi
+
+				if [[ "$AMOUNT" -le 2000 ]]
+				then
+					no_of_1000_note=$(( $AMOUNT / 1000 ))
+					remaining_cash=$(($no_of_1000_note * 1000))
+					AMOUNT=$(($AMOUNT - $remaining_cash)) 
+				fi
+				#echo no of 1000 notes receive $no_of_1000_note
+				
+				if [[ "$AMOUNT" -le 1000 ]]
+				then
+					if [[ "$AMOUNT" -ge 500 ]]
+					then
+						amount1=$(($AMOUNT - 500))
+						no_of_100_note=$(( $amount1 / 100 ))
+						remaining_cash=$(($no_of_100_note * 100))
+						AMOUNT=$(($AMOUNT - $remaining_cash)) 
+						no_of_500_note=$(( $AMOUNT / 500 ))
+					fi
+					#echo no of 500 notes receive $no_of_500_note
+				fi
+
+				if [[ "$AMOUNT" < 500 ]]
+				then
+					no_of_100_note=$(( $AMOUNT / 100 ))
+				fi
+
+				if (( $AMOUNT % 100 == 0 ))
+				then
+				echo
+				echo -e "\t\tYou collected cash -"
+				echo -e "\t\t\t\t\t=============================================="
+				echo -e "\t\t\t\t\t\tNo. of Notes\tParticular"
+				echo -e "\t\t\t\t\t=============================================="
+				echo -e "\t\t\t\t\t\t$no_of_2000_note\t\t2000 Note"
+				echo -e "\t\t\t\t\t=============================================="
+				echo -e "\t\t\t\t\t\t$no_of_1000_note\t\t1000 Note"
+				echo -e "\t\t\t\t\t=============================================="
+				echo -e "\t\t\t\t\t\t$no_of_500_note\t\t500 Note"
+				echo -e "\t\t\t\t\t=============================================="
+				echo -e "\t\t\t\t\t\t$no_of_100_note\t\t100 Note"
+				echo -e "\t\t\t\t\t=============================================="
+				echo 
+				echo
+
+				if [[ "$withdraw_amount" -lt "$balance" ]]
+				then
+        				balance=$((balance - withdraw_amount))
+        				echo "${withdraw_amount} has been deducted from your account!"
+        				echo ${balance} > balance.txt
+				fi
+				else
+					echo -e "\t\t\t\t\tPlease enter the correct Amount in figure of 100's"
+				fi
+			else 
+				echo -e "\t\t\t\tYou CAN NOT make such BIG transaction at a single time"
+				echo -e "\t\t\t\t\t Please try amount less than 10,000 "
+			fi
+			;;
+		3)
+			echo "Enter the amount:"
+			read AMOUNT;
+			balance=$(($AMOUNT + $balance))
+			echo "Thank you! ${AMOUNT} has been added to your account!"
+			echo ${balance} > balance.txt
+			;;
+		4)
+			echo "Thank you for using our ATM service!"
+			exit 0
+			;;
+		*)
+		echo "Please Enter a valid option!"
+		;;
+esac
+done
+done
